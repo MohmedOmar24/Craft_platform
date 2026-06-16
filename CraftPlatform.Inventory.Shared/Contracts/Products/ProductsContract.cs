@@ -1,0 +1,24 @@
+﻿
+namespace CraftPlatform.Inventory.Shared.Contracts.Products
+{
+    public record ProductsContract
+    (
+        Guid ProductId,
+        Guid CategoryId,
+        Guid InventoryId,
+        string Name,
+        string Description,
+        decimal UnitPrice,
+        float Width,
+        float Weight,
+        float Length,
+        float Height,
+        decimal TaxCost,
+        decimal ProfitPerUnit,
+        decimal ProductionCost,
+        Guid CreatedBy,
+        Guid UpdatedBy,
+        DateTime CreatedAt,
+        DateTime UpdatedAt
+    );
+}

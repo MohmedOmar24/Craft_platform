@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="../CraftPlatform.Inventory.Core/CraftPlatform.Inventory.Core.csproj" />
+  <Project Path="../CraftPlatform.Inventory.Infrastructure/CraftPlatform.Inventory.Infrastructure.csproj" />
+  <Project Path="../CraftPlatform.Inventory.Services/CraftPlatform.Inventory.Services.csproj" />
+  <Project Path="../CraftPlatform.Inventory.Shared/CraftPlatform.Inventory.Shared.csproj" />
+  <Project Path="CraftPlatform.Inventory.Api.csproj" />
+</Solution>

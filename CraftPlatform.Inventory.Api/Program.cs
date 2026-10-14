@@ -1,10 +1,9 @@
-using CraftPlatform.Inventory.Api.EndPoints.Categories.Create;
-using CraftPlatform.Inventory.Api.EndPoints.Categories.Delete;
-using CraftPlatform.Inventory.Api.EndPoints.Categories.Read;
-using CraftPlatform.Inventory.Api.EndPoints.Categories.ReadById;
-using CraftPlatform.Inventory.Api.EndPoints.Categories.Update;
+
+using CraftPlatform.Inventory.Api.Extensions;
 using CraftPlatform.Inventory.Infrastructure;
+using CraftPlatform.Inventory.Infrastructure.Data;
 using CraftPlatform.Inventory.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,8 +21,24 @@ builder.Services.AddSwaggerGen(); // Add Swagger generation
 builder.Services.AddInfrastructureLayer(builder.Configuration);
 builder.Services.AddServiceLayerDependencies();
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+        policy.WithOrigins(
+                "http://localhost:5173",
+                "http://127.0.0.1:5173",
+                "http://localhost:4173")
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -35,15 +50,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors();
+
 app.UseAuthorization();
 
 app.MapControllers();
 
 // map endpoints
-app.MapCategoriesCreateEndPoint();
-app.MapCategoriesReadEndpoint();
-app.MapCategoriesReadByIdEndpoint();
-app.MapCategoriesDeleteEndpoint();
-app.MapCategoriesUpdateEndpoint();
+app.MapEndpoints();
 
 app.Run();

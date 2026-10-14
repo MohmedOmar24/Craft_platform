@@ -1,5 +1,8 @@
 ﻿using CraftPlatform.Inventory.Api.Extensions;
+using CraftPlatform.Inventory.Core.Entities;
 using CraftPlatform.Inventory.Core.Interfaces;
+using CraftPlatform.Inventory.Services.Factories;
+using CraftPlatform.Inventory.Shared.Contracts.Categories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CraftPlatform.Inventory.Api.EndPoints.Categories.Read
@@ -8,12 +11,14 @@ namespace CraftPlatform.Inventory.Api.EndPoints.Categories.Read
     {
         public static void MapCategoriesReadEndpoint(this IEndpointRouteBuilder app)
         {
-            app.MapGet(CategoriesRoutes.BaseUrl, async ([FromServices] ICategoriesService categoriesService) =>
+            app.MapGet(CategoriesRoutes.BaseUrl, async (InventoryFactory<CategoriesOperationsContract, CategoriesContract> factory) =>
             {
-                var result = await categoriesService.ReadCategories();
+                var service = factory.Build(nameof(Category));
+                var result = await service.Read(); 
 
                 return result.Succeeded ? Results.Ok(
-                   result.Value.Select(c => new CategoriesReadResponse(c.Name,
+                   result.Value.Select(c => new ReadCategoriesResponse(c.CategoryId,
+                                                                       c.Name,
                                                                        c.Description,
                                                                        c.CreatedBy,
                                                                        c.UpdatedBy,

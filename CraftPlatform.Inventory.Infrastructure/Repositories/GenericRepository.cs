@@ -1,29 +1,29 @@
-﻿using CraftPlatform.Inventory.Core.Specifications;
+﻿using Ardalis.Specification;
+using Ardalis.Specification.EntityFrameworkCore;
+using CraftPlatform.Inventory.Core.Specifications;
 using CraftPlatform.Inventory.Infrastructure.Data;
 using CraftPlatform.Inventory.Services.Repositories;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
+
 
 namespace CraftPlatform.Inventory.Infrastructure.Repositories
 {
     public class GenericRepository<T>(AppDbContext dbContext) : IGenericRepository<T> where T : class
     {
-        public async Task<IEnumerable<T>> ListAsync(BaseSpecification<T> specification,
+        public async Task<IEnumerable<T>> ListAsync(ISpecification<T> specification,
                                                     CancellationToken cancellationToken = default)
         {
-            return await dbContext.Set<T>()
-                .Where(specification.Criteria)
-                .ToListAsync(cancellationToken);
+            return await SpecificationEvaluator.Default
+                                               .GetQuery(dbContext.Set<T>(), specification)
+                                               .ToListAsync(cancellationToken);
         }
 
-        public async Task<T?> FirstOrDefaultAsync(BaseSpecification<T> specification,
+        public async Task<T?> FirstOrDefaultAsync(ISpecification<T> specification,
                                                  CancellationToken cancellationToken = default)
         {
-            return await dbContext.Set<T>()
-                .Where(specification.Criteria)
-                .FirstOrDefaultAsync(cancellationToken);
+            return await SpecificationEvaluator.Default
+                                               .GetQuery(dbContext.Set<T>(), specification)
+                                               .FirstOrDefaultAsync(cancellationToken);
         }
         public async Task AddAsync(T entity, CancellationToken cancellationToken = default)
         {

@@ -1,7 +1,8 @@
 ﻿namespace CraftPlatform.Inventory.Api.EndPoints.Categories.Read
 {
-    public record CategoriesReadResponse
+    public record ReadCategoriesResponse
     (
+     Guid CategoryId,
      string Name,
      string Description,
      Guid CreatedBy,

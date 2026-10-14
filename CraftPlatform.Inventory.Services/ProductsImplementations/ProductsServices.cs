@@ -2,6 +2,7 @@
 using CraftPlatform.Inventory.Core.Entities;
 using CraftPlatform.Inventory.Core.Interfaces;
 using CraftPlatform.Inventory.Core.Specifications.Categories;
+using CraftPlatform.Inventory.Core.Specifications.Inventories;
 using CraftPlatform.Inventory.Core.Specifications.Products;
 using CraftPlatform.Inventory.Services.Errors;
 using CraftPlatform.Inventory.Services.Repositories;
@@ -11,13 +12,25 @@ using CraftPlatform.Inventory.Shared.Contracts.Products;
 namespace CraftPlatform.Inventory.Services.ProductsImplementations
 {
     public class ProductsServices<TRequest, TResponse>(IGenericRepository<Product> productRepository,
-                                                      IGenericRepository<Category> categoryRepository) : IGenericServices<TRequest, TResponse>
+                                                       IGenericRepository<Category> categoryRepository,
+                                                       IGenericRepository<Core.Entities.Inventory> InventoryRepository) : IGenericServices<TRequest, TResponse>
     {
         public async Task<Result<TResponse>> Create(TRequest contract)
         {
             var oContract = contract as ProductsOperationsContract;
+            
+            //Category
             var oCategoryReadByIdSpecification = new FindCategoryByIdSpecification(oContract!.CategoryId);
             var oCategory = await categoryRepository.FirstOrDefaultAsync(oCategoryReadByIdSpecification);
+            if (oCategory == null)
+                return Result.Failure<TResponse>(ProductErrors.ProductCategoryNotFound);
+
+            //Inventory
+            var oInventoryReadByIdSpecification = new FindInventoryByIdSpecification(oContract.InventoryId);
+            var oInventory= await InventoryRepository.FirstOrDefaultAsync(oInventoryReadByIdSpecification);
+            if (oInventory == null)
+                return Result.Failure<TResponse>(ProductErrors.ProductInventoryNotFound);
+
             var oData = new Product
             {
                 Name = oContract!.Name,
@@ -31,8 +44,11 @@ namespace CraftPlatform.Inventory.Services.ProductsImplementations
                 TaxCost = oContract.TaxCost,
                 ProductionCost = oContract.ProductionCost,
                 ProfitPerUnit = oContract.ProfitPerUnit,
-                Category = oCategory!
+                Category = oCategory!,
+                Inventory = oInventory,
+                InventoryId = oContract.InventoryId,
             };
+            
             await productRepository.AddAsync(oData);
             return Result.Success(new ProductsContract(
                 oData.ProductId,
@@ -83,9 +99,9 @@ namespace CraftPlatform.Inventory.Services.ProductsImplementations
                                    ) as dynamic);
 
         }
-        public async Task<Result<IEnumerable<TResponse>>> Read()
+        public async Task<Result<List<TResponse>>> Read()
         {
-            var oReadSpecification = new FindProductsSpecification();
+            var oReadSpecification = new FindProductsSpecification(); 
             var oProducts = await productRepository.ListAsync(oReadSpecification);
             var oData = oProducts.Select(oProduct => new ProductsContract(
                 oProduct.ProductId,
@@ -148,7 +164,8 @@ namespace CraftPlatform.Inventory.Services.ProductsImplementations
         }
         public async Task<Result<IEnumerable<TResponse>>> ReadByParentId(Guid categoryId)
         {
-            var oReadByCategoryIdSpecification = new FindProductsByCategoryIdSpecification(categoryId);
+            var oReadByCategoryIdSpecification =
+                new FindProductsByCategoryIdSpecification(categoryId);
             var oProducts = await productRepository.ListAsync(oReadByCategoryIdSpecification);
             if (!oProducts.Any())
             {

@@ -5,7 +5,7 @@ using CraftPlatform.Inventory.Services.Errors;
 using CraftPlatform.Inventory.Services.Repositories;
 using CraftPlatform.Inventory.Shared.Abstraction;
 using CraftPlatform.Inventory.Shared.Contracts.Categories;
-
+ 
 namespace CraftPlatform.Inventory.Services.CategoriesImplementations
 {
     public class CategoriesService<TRequest, TRespone>(IGenericRepository<Category> categoryRepository):IGenericServices<TRequest,TRespone>
@@ -56,7 +56,7 @@ namespace CraftPlatform.Inventory.Services.CategoriesImplementations
             else return Result.Failure(CategoryErrors.CategoryNotFound);
         }
 
-        public async Task<Result<IEnumerable<TRespone>>> Read()
+        public async Task<Result<List<TRespone>>> Read()
         {
             var oReadAllSpecification = new FindCategoriesSpecification();
             var categories = await categoryRepository.ListAsync(oReadAllSpecification);
@@ -69,7 +69,7 @@ namespace CraftPlatform.Inventory.Services.CategoriesImplementations
                     category.UpdatedBy,
                     category.CreatedAt,
                     category.UpdatedAt
-                ));
+                )).ToList();
             return Result.Success(oData as dynamic);
         }
       

@@ -3,10 +3,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CraftPlatform.Inventory.Api.EndPoints.Categories.Update
 {
-    public record CategoriesUpdateRequest
+    public record UpdateCategoriesRequest
     (
         [FromRoute]
-        Guid Id ,
+        Guid categoryId,
         [FromBody]
         Body Body
     );

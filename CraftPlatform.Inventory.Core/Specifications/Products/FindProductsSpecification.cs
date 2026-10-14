@@ -1,11 +1,13 @@
 ﻿using CraftPlatform.Inventory.Core.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Ardalis.Specification;
 
 namespace CraftPlatform.Inventory.Core.Specifications.Products
 {
-    public class FindProductsSpecification():BaseSpecification<Product>(Product => Product.Id != 0)
+    public class FindProductsSpecification:Specification<Product>
     {
+        public FindProductsSpecification()
+        {
+            Query.Where(product => product.Id != 0);
+        }   
     }
 }

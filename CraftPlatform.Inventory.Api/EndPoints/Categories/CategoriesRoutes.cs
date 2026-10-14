@@ -1,6 +1,6 @@
 ﻿namespace CraftPlatform.Inventory.Api.EndPoints.Categories
 {
-    public class CategoriesRoutes
+    public static class CategoriesRoutes
     {
         public const string BaseUrl = "/categories";
         public const string Delete = BaseUrl + "/{categoryId}";

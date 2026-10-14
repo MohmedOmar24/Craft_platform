@@ -1,12 +1,12 @@
 ﻿using CraftPlatform.Inventory.Shared.Abstraction;
 
-
+ 
 namespace CraftPlatform.Inventory.Core.Interfaces
 {
     public interface IGenericServices<TRequest,TResponse>
-    {
+    { 
         Task<Result<TResponse>> Create(TRequest contract);
-        Task<Result<IEnumerable<TResponse>>> Read();
+        Task<Result<List<TResponse>>> Read();
         Task<Result<IEnumerable<TResponse>>> ReadByParentId(Guid parentContractId);
         Task<Result<TResponse>> ReadById(Guid contractId);
         Task<Result<TResponse>> ReadSingleByParentId(Guid contractId,Guid parentContractId);

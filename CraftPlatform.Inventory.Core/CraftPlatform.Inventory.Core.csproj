@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Ardalis.Specification" Version="9.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\CraftPlatform.Inventory.Shared\CraftPlatform.Inventory.Shared.csproj" />
   </ItemGroup>
 
